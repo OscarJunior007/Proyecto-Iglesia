@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso de Cédula</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            justify-content: center center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4757;
+        }
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ingresa tu Cédula</h1>
+        <form id="loginForm">
+            <input id = 'cedula' type="text" placeholder="Ingresa tu cédula" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();  // Prevenir comportamiento por defecto del formulario
+
+            const cedula = document.getElementById('cedula').value;  // Obtener el valor de la cédula
+
+           
+            const response = await fetch("http://localhost:8000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",  
+                },
+                body: JSON.stringify({ cedula: cedula }),  
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data)
+                console.log(data['access_token']);
+                console.log(data['profile']);
+
+                localStorage.setItem("token", data['access_token']);
+                localStorage.setItem("profile", data['profile']);
+                localStorage.setItem("cedula",cedula )
+
+                const checkUserData = await fetch(`http://127.0.0.1:8000/celulas/registradas/${cedula}`);
+                
+                if (checkUserData.ok) {
+                const userData = await checkUserData.json();
+                console.log(userData)
+                    if (userData) {  
+                        window.location.href = "celulas"; 
+                    } else {
+                        window.location.href = "home"; 
+                    }
+            } else {
+                // Si la consulta de los datos falla, redirigir a home
+                window.location.href = "home";
+            }
+            } else {
+                const error = await response.json();
+                alert("Error: " + JSON.stringify(error));  // Convertir el objeto de error a una cadena JSON
+            }
+        });
+
+
+    </script>
+</body>
+</html>

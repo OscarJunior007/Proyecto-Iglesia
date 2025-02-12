@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            justify-content: center center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4757;
+        }
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aun no tienes celulas registradas, deseas agregar una nueva?</h1>
+         <button id="registroButton" type="submit">Registrar</button> 
+    </div>
+</body>
+
+<script>
+    
+    let token = localStorage.getItem('token');
+    const me =  async () => {
+        const response = await fetch('http://127.0.0.1:8000/me',{
+            headers:{
+                    'Authorization': `Bearer ${token}`   
+            }            
+            })
+
+            if(!response.ok){
+                
+
+                setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui")
+                    window.location.href = "login";
+                    }, 2000);
+
+    
+            }
+
+            else{
+                document.getElementById("registroButton").addEventListener("click", function(event) {
+                    event.preventDefault();  // Prevenir el comportamiento predeterminado de submit (si está dentro de un formulario)
+                    
+                    // Asegúrate de que la ruta del archivo HTML sea correcta
+                    window.location.href = "create_celula";  // Ruta del archivo HTML
+                });
+            }
+
+    }
+
+    me()
+    
+
+</script>
+</html>

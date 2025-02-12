@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4757;
+        }
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Bootstrap JS and dependencies -->
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar nueva célula</h1>
+        <form id="form" class="formulario">
+            <div class="row m-4">
+                <div class="col-3"><h5>Cedula lider:</h5></div>
+                
+                <div class="col" ><input id="lider_celula" type="text" placeholder="Día de la reunión" required readonly disabled></div>
+             </div>
+             <div class="row  m-4">
+                <div class="col-3"><h5>Dia de la reunion:</h5></div>
+                <div class="col" >
+            <select id="op" name="thelist" onChange="combo(this, 'theinput')">
+                <option value="LUNES">Lunes</option>
+                <option value="MARTES">Martes</option>
+                <option value="MIERCOLES">Miercoles</option>
+                <option value="JUEVES">Jueves</option>
+                <option value="VIERNES">Viernes</option>
+                <option value="SABADO">Sabado</option>
+                <option value="DOMINGO">Domingo</option>
+             </select>
+            </div>
+             </div>
+            <div class="row  m-4">
+                <div class="col-3"><h5>Direccion de la reunion:</h5></div>
+                <div class="col" ><input id="Direccion" type="text" placeholder="Calle 32 #21-43 corea" required></div>
+            </div>
+            <div class="row  m-4">
+                <div class="col-3"><h5>Nombre del lider:</h5></div>
+                <div class="col" ><input id="name_lider" type="text" placeholder="Nombre del Líder" required></div>
+            </div>
+            <div class="row  m-4">
+                <div class="col-3"><h5>Nombre del Anfitrión:</h5></div>
+                <div class="col" ><input id="name_anfitrion" type="text" placeholder="Nombre del Anfitrión" required></div>
+            </div>
+            <div class="row  m-4">
+            <div class="col-3"><h5>Nombre del sublider:</h5></div>
+            <div class="col" ><input id="name_sublider" type="text" placeholder="Nombre del Sublíder" required></div>
+            </div>
+            <div class="row  m-4">
+                <div class="col-3"><h5>Nombre de la celula:</h5></div>
+                <div class="col" ><input id="name_celula" type="text" placeholder="Celula donde adriana calle 32#12-32" required></div>
+            </div>
+            <!-- <h5>Numero total de asistentes a la celula:</h5>
+            <input id="asistencias_celula" type="number" placeholder="Número total de asistentes a la célula" required>
+            <h5>¿Cuántas personas nuevas asistieron?</h5>
+            <input id="new_people" type="number" placeholder="¿Cuántas personas nuevas asistieron?" required>
+            <h5>¿Cuántas personas ya asistieron a la iglesia?</h5>
+            <input id="old_people" type="number" placeholder="¿Cuántas personas ya asistieron a la iglesia?" required> -->
+
+            <button type="submit">AGREGAR</button>
+        </form>
+    </div>
+
+    <!-- Modal de Registro Exitoso -->
+    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registroModalLabel">Registro Exitoso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¡La célula ha sido registrada con éxito!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="titulo-modal" class="modal-title" id="registroModalLabel">Error en el Registro</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="mensaje-modal" class="modal-body">
+                    Hubo un error al registrar la célula.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("form");
+        const cedula = localStorage.getItem('cedula');
+        if (cedula) {
+            document.getElementById('lider_celula').value = cedula;
+        } else {
+            console.warn('No se encontró una cédula en localStorage.');
+        }
+
+        document.getElementById("op").addEventListener('change', function() {
+        let op = this.value;
+        console.log("Selected option:", op);
+   });
+
+        
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            // Función para enviar datos al backend
+            const enviarDatos = async () => {
+                const lider_cedula = document.getElementById('lider_celula').value;
+                const dia_celula = document.getElementById('op').value;
+                const nombre_celula =  document.getElementById('name_celula').value;
+                const direccion = document.getElementById('Direccion').value;
+                const name_lider = document.getElementById('name_lider').value;
+                const name_anfitrion = document.getElementById('name_anfitrion').value;
+                const name_sublider = document.getElementById('name_sublider').value;
+                
+                console.log("dia seleccionado: ",dia_celula)
+                // Validación de campos
+                if (!dia_celula || !name_lider || !name_anfitrion || !name_sublider) {
+                        console.error("Uno o más elementos del formulario no existen.");
+                        alert("Hubo un error con el formulario. Por favor, revisa los campos y vuelve a intentarlo.");
+                        return;
+                    }
+                const data = {
+                    lider_cedula,
+                    dia_celula,
+                    direccion,
+                    nombre_celula,
+                    name_lider,
+                    name_anfitrion,
+                    name_sublider,
+                    
+                };
+                console.log(data)
+                let token = localStorage.getItem('token');
+                try {
+                    let response = await fetch('http://127.0.0.1:8000/register/celulas', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`   
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) {
+                        $('#errorModal').modal('show');
+                        return;
+                    }
+
+                    const result = await response.json();
+                    console.log("Respuesta del backend:", result);
+                    $('#registroModal').modal('show'); // Mostrar el popup modal
+                    localStorage.setItem('direccion',nombre_celula)
+                    setTimeout(() => {
+                        window.location.href = "celulas"; // Redirige después de 2 segundos
+                        console.log("Delayed for 1 second.");
+                    }, 2000);
+
+                    return;
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Hubo un error al enviar los datos. Por favor, intenta nuevamente.");
+                    throw error;
+                }
+            };
+
+            enviarDatos();
+        });
+    </script>
+</body>
+
+</html>

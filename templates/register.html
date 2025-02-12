@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .error {
+      color: red;
+    }
+    .input-error {
+    border: 2px solid red !important; /* El !important asegura que sobrescriba otros estilos */
+}
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4757;
+        }
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Bootstrap JS and dependencies -->
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    
+        <div class="container">
+            <h1>Registro</h1>
+            <form id="form">
+                <input id="nombre" type="text" placeholder="Nombre" required>
+                <div id="errorNombre" class="error"></div>
+                <input id="correo" type="email" placeholder="Correo Electronico" required>
+                <div id="errorEmail" class="error"></div>
+                <input id="celular" type="text" placeholder="Celular" required>
+                <div id="errorTelefono" class="error"></div>
+                <input id="direccion" type="text" placeholder="Dirección" required>
+                <div id="errorDireccion" class="error"></div>
+                <input id="cedula" type="text" placeholder="Cédula" required>
+                <div id="errorCedula" class="error"></div>
+                <div id="errorGeneral" class="error"></div>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+    
+        <!-- Modal de éxito -->
+        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registroModalLabel">Registro Exitoso</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¡El usuario se ha registrado con éxito!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modal de error -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="titulo-modal" class="modal-title">Usuario ya ha sido registrado</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="mensaje-modal" class="modal-body">
+                        La cédula ya está registrada.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Scripts de Bootstrap y jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+
+let token = localStorage.getItem('token');
+const me =  async () => {
+        const response = await fetch('http://127.0.0.1:8000/me',{
+            headers:{
+                    'Authorization': `Bearer ${token}`   
+            }            
+            })
+
+            if(!response.ok ){
+
+                setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui ")
+                    window.location.href = "login";
+                    }, 2);
+
+    
+            }
+
+            else{
+
+
+                data = await response.json()
+                console.log("no tienes permiso para estar aqui "+data)
+                if (data.profile !='ADMIN'){
+                    setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui ")
+                    window.location.href = "login";
+                    }, 2);
+                }
+                
+                document.getElementById("registroButton").addEventListener("click", function(event) {
+                    event.preventDefault();  // Prevenir el comportamiento predeterminado de submit (si está dentro de un formulario)
+                    
+                    // Asegúrate de que la ruta del archivo HTML sea correcta
+                    window.location.href = "create_celula";  // Ruta del archivo HTML
+                });
+            }
+
+    }
+
+    me()
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('form');
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Limpiar errores previos
+        document.querySelectorAll('.error').forEach(function (error) {
+            error.textContent = '';
+        });
+
+        // Validar el formulario antes de enviar los datos
+        if (!validarFormulario()) {
+            return; // Detener el envío si el formulario no es válido
+        }
+
+        // Enviar datos al backend
+        try {
+            const nombre = document.getElementById('nombre').value;
+            const correo = document.getElementById('correo').value;
+            const celular = document.getElementById('celular').value;
+            const direccion = document.getElementById('direccion').value;
+            const cedula = document.getElementById('cedula').value;
+
+            const data = {
+                user_nombre: nombre,
+                email: correo,
+                celular: celular,
+                user_direccion: direccion,
+                user_cedula: cedula
+            };
+
+            const response = await fetch('http://127.0.0.1:8000/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`   
+
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Mostrar el modal de error con el mensaje del backend
+                document.getElementById('titulo-modal').textContent = "Error en el registro";
+                document.getElementById('mensaje-modal').textContent = result.message || "La cédula ya está registrada.";
+                $('#errorModal').modal('show');
+                return;
+            }
+
+            // Mostrar el modal de éxito
+            $('#registroModal').modal('show');
+
+            // Redirigir al usuario después de cerrar el modal
+            $('#registroModal').on('hidden.bs.modal', function () {
+                window.location.href = "login";
+            });
+
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('titulo-modal').textContent = "Error";
+            document.getElementById('mensaje-modal').textContent = "Hubo un error al enviar los datos. Por favor, intenta nuevamente.";
+            $('#errorModal').modal('show');
+        }
+    });
+
+    function validarFormulario() {
+    let esValido = true;
+
+    // Limpiar errores previos
+    document.querySelectorAll('.error').forEach(function (error) {
+        error.textContent = '';
+    });
+
+    // Limpiar clases de error
+    document.querySelectorAll('input').forEach(function (input) {
+        input.classList.remove('input-error');
+    });
+
+    // Validar nombre
+    const nombre = document.getElementById('nombre');
+    if (nombre.value === '') {
+        document.getElementById('errorNombre').textContent = 'El nombre es requerido.';
+        nombre.classList.add('input-error');
+        esValido = false;
+    }
+
+    // Validar email
+    const correo = document.getElementById('correo');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (correo.value === '') {
+        document.getElementById('errorEmail').textContent = 'El email es requerido.';
+        correo.classList.add('input-error');
+        esValido = false;
+    } else if (!emailRegex.test(correo.value)) {
+        document.getElementById('errorEmail').textContent = 'El email no es válido.';
+        correo.classList.add('input-error');
+        esValido = false;
+    }
+
+    // Validar teléfono
+    const celular = document.getElementById('celular');
+    const telefonoRegex = /^[0-9]+$/;
+    if (celular.value === '') {
+        document.getElementById('errorTelefono').textContent = 'El teléfono es requerido.';
+        celular.classList.add('input-error');
+        esValido = false;
+    } else if (!celular.value.startsWith('3')) {
+        document.getElementById('errorTelefono').textContent = 'El teléfono debe empezar con el 3.';
+        celular.classList.add('input-error');
+        esValido = false;
+    } else if (!telefonoRegex.test(celular.value)) {
+        document.getElementById('errorTelefono').textContent = 'El teléfono solo debe contener números.';
+        celular.classList.add('input-error');
+        esValido = false;
+    } else if (celular.value.length !== 10) {
+        document.getElementById('errorTelefono').textContent = 'El teléfono debe tener 10 dígitos.';
+        celular.classList.add('input-error');
+        esValido = false;
+    }
+
+    // Validar dirección
+    const direccion = document.getElementById('direccion');
+    if (direccion.value === '' || direccion.length <= 1) {
+        document.getElementById('errorDireccion').textContent = 'La dirección es requerida.';
+        direccion.classList.add('input-error');
+        esValido = false;
+    }
+
+    // Validar cédula
+    const cedula = document.getElementById('cedula');
+    const cedulaRegex = /^[0-9]+$/;
+    if (cedula.value === '') {
+        document.getElementById('errorCedula').textContent = 'La cédula es requerida.';
+        cedula.classList.add('input-error');
+        esValido = false;
+    } else if (!cedulaRegex.test(cedula.value)) {
+        document.getElementById('errorCedula').textContent = 'La cédula solo debe contener números.';
+        cedula.classList.add('input-error');
+        esValido = false;
+    } else if (cedula.value.length < 8 || cedula.value.length > 10) {
+        document.getElementById('errorCedula').textContent = 'La cédula debe tener entre 8 y 10 dígitos.';
+        cedula.classList.add('input-error');
+        esValido = false;
+    }
+
+    return esValido;
+}
+});
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Células</title>
+    <style>
+
+        .box {
+            display: flex;
+            flex-direction: column;         /* Hacer el contenedor un flexbox */
+            justify-content: space-between;  /* Alinea el contenido a los extremos */
+            align-items: center;   /* Alinea verticalmente los elementos */
+            margin-bottom: 10px;    /* Agrega un margen abajo para separar la tabla */
+        }
+        .caja {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa; /* Color de fondo suave */
+            border-radius: 12px; /* Bordes redondeados */
+            padding: 20px; /* Espaciado interno */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para efecto de elevación */
+            text-align: center; /* Centrar el texto */
+            max-width: 300px; /* Ancho máximo */
+            margin: 20px auto; /* Centrar en la pantalla */
+            border: 1px solid #ff758c; /* Borde sutil */
+        }
+
+        .caja h1 {
+            font-size: 18px;
+            color: #333; /* Color del texto */
+            margin: 0; /* Eliminar margen extra */
+        }
+        .caja button{
+            height: 10%;
+        }
+        
+       
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4757;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #ff758c;
+            color: white;
+        }
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+            }
+        }
+        .box-box{
+            justify-content: space-between;
+            gap: 60%;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Células registradas</h1>
+            
+            <div class="box-box"> 
+                <button id="nueva_celula" type="submit">Añadir nueva celula</button>
+           
+                <button id="registro_usuario" type="submit">Registrar usuario</button>
+                <div class="contenedor" id="contenedor">
+            </div>
+           
+
+
+            </div>
+        <!-- <table id="tablaCelulas">
+            <thead>
+                <tr>
+                    <th>Cedula lider</th>
+                    <th>Fecha</th>
+                    <th>Direccion</th>
+                    <th>Líder</th>
+                    <th>Anfitrión</th>
+                    <th>Sublíder</th>
+                    <th>Asistentes</th>
+                    <th>Nuevos</th>
+                    <th>Recurrentes</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table> -->
+        
+    </div>
+    <script>
+
+    //  const tabla = document.getElementById("tablaCelulas").getElementsByTagName("tbody")[0];
+     const cedula = localStorage.getItem('cedula');
+     const nueva_celula =  document.getElementById("nueva_celula");
+     const button_registro_usuario =  document.getElementById("registro_usuario")
+     const profile = localStorage.getItem('profile')
+     console.log(profile)
+
+     function adminButton(){
+        if (profile === "ADMIN"){
+            button_registro_usuario.style.display = 'block';
+        }
+     }
+     
+     adminButton()
+
+     if(nueva_celula){
+        nueva_celula.addEventListener('click', function() {
+    
+            window.location.href = 'create_celula'; 
+
+        });
+     }else{
+        console.log("el elemento no se encuentra en el doom")
+     }
+    
+    
+    const obtenerDatos = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/celulas/registradas/${cedula}`);
+                if (!response.ok) {
+                    throw new Error("Error al obtener los datos");
+                }
+                const datos = await response.json();
+                console.log("Datos recibidos",datos)
+                return datos;
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un error al obtener los datos. Por favor, intenta nuevamente.");
+                throw error;
+            }
+        };
+
+        // let nombre_celula =  localStorage.getItem('direccion')
+        // console.log(nombre_celula)
+
+        
+
+
+
+
+
+        //    // Función para llenar la tabla con los datos obtenidos
+        //     const llenarTabla = (datos) => {
+        //     console.log(datos); // Añadir esto para verificar la estructura de los datos
+        //     tabla.innerHTML = ""; // Limpiar la tabla antes de llenarla
+
+        //     datos.forEach((dato) => {
+        //         const nuevaFila = tabla.insertRow();
+        //         nuevaFila.innerHTML = `
+        //     <td>${dato.lider_cedula ?? 'No disponible'}</td>
+        //     <td>${dato.date_celula  ?? 'No disponible'}</td>
+        //     <td>${dato.direccion  ?? 'No disponible'}</td>
+        //     <td>${dato.name_lider  ?? 'No disponible'}</td>
+        //     <td>${dato.name_anfitrion ?? 'No disponible'}</td>
+        //     <td>${dato.name_sublider  ?? 'No disponible'}</td>
+        //     <td>${dato.asistencias_celula  ?? 'No disponible'}</td>
+        //     <td>${dato.new_people  ?? 'No disponible'}</td>
+        //     <td>${dato.old_people  ?? 'No disponible'}</td>
+        // `;
+        //     });
+        // };
+    
+        const cargarDatosIniciales = async () => {
+    try {
+        const datos = await obtenerDatos();
+
+        // if (!Array.isArray(datos) || datos.length === 0) {
+        //     console.error("No se encontraron datos para mostrar.");
+        //     return;
+        // }
+
+        const contenedor = document.getElementById("contenedor");
+
+        // Recorremos cada objeto dentro del array y creamos una caja para cada uno
+        datos.forEach(celula => {
+            let caja = document.createElement("div");
+            caja.className = "caja";
+            
+            let button = document.createElement("button");
+            button.onclick = function aaa(){window.location.href='http://localhost:8000/reuniones/'+celula.id}
+            button.className = "button";
+
+            let titulo = document.createElement("h1");
+            titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
+
+            // let text_button = document.createElement("h5");
+            button.textContent ="Registrar reunion";
+
+            caja.appendChild(titulo);
+            caja.appendChild(button);
+
+            // button.appendChild(text_button)
+            contenedor.appendChild(caja); 
+            
+         });
+
+    } catch (error) {
+        console.error("Error al cargar los datos iniciales:", error);
+    }
+};
+
+// Ejecutar la función correctamente cuando la página cargue
+window.onload = cargarDatosIniciales;
+
+
+ 
+       
+
+    </script>
+</body>
+</html>

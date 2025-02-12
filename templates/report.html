@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+        let token = localStorage.getItem('token');
+    const me =  async () => {
+        const response = await fetch('http://127.0.0.1:8000/api/report',{
+            headers:{
+                    'Authorization': `Bearer ${token}`   
+            }            
+            })
+            const contenidoDelArchivo = await response.blob();
+            const a = document.createElement("a");
+            const url = URL.createObjectURL(contenidoDelArchivo);
+            a.href = url;
+            a.download = "report.xls";
+            a.click();
+            URL.revokeObjectURL(url);
+
+            if(!response.ok){
+                
+
+                setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui")
+                    window.location.href = "login";
+                    }, 2000);
+
+    
+            }
+
+            else{
+                document.getElementById("registroButton").addEventListener("click", function(event) {
+                    event.preventDefault();  // Prevenir el comportamiento predeterminado de submit (si está dentro de un formulario)
+                    
+                    // Asegúrate de que la ruta del archivo HTML sea correcta
+                    window.location.href = "create_celula";  // Ruta del archivo HTML
+                });
+            }
+
+            
+    }
+
+    me()
+        
+      
+
+    </script>    
+</body>
+</html>
