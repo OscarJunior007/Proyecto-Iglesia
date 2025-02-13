@@ -57,7 +57,7 @@ def setup(app: FastAPI):
         
         user_repo_firestore.create_user(user_repo.User(**user))     # saving user to database
 
-        correo.EnviarCorreo(data.email)
+        correo.EnviarCorreo(data.email,data.user_nombre)
 
         return user
 
