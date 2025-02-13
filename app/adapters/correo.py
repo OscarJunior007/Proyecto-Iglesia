@@ -10,16 +10,16 @@ load_dotenv()
 
 password = os.getenv("password_correo")
 
-def EnviarCorreo(email_reciver):
+def EnviarCorreo(email_reciver,nombre):
 
     email_sender = os.getenv("email_sender")
 
     subject = "📩 ¡Verificación de Registro Exitosa!"
 
-    body = """
+    body = f"""
     ¡Hola! 👋
 
-        Nos complace informarte que tu usuario ha sido creado exitosamente. 🎉
+        Hermano/a {nombre} nos complace informarte que tu usuario ha sido creado exitosamente. 🎉
 
         🔹 Para acceder, usa tu número de documento.
         ❓ Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.
