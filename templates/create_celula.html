@@ -70,52 +70,45 @@
         <h1>Agregar nueva célula</h1>
         <form id="form" class="formulario">
             <div class="row m-4">
-                <div class="col-3"><h5>Cedula lider:</h5></div>
-                
-                <div class="col" ><input id="lider_celula" type="text" placeholder="Día de la reunión" required readonly disabled></div>
-             </div>
-             <div class="row  m-4">
-                <div class="col-3"><h5>Dia de la reunion:</h5></div>
-                <div class="col" >
-            <select id="op" name="thelist" onChange="combo(this, 'theinput')">
-                <option value="LUNES">Lunes</option>
-                <option value="MARTES">Martes</option>
-                <option value="MIERCOLES">Miercoles</option>
-                <option value="JUEVES">Jueves</option>
-                <option value="VIERNES">Viernes</option>
-                <option value="SABADO">Sabado</option>
-                <option value="DOMINGO">Domingo</option>
-             </select>
+                <div class="col-3"><h5>Cédula líder:</h5></div>
+                <div class="col"><input id="lider_celula" type="text" placeholder="Día de la reunión" required readonly disabled></div>
             </div>
-             </div>
-            <div class="row  m-4">
-                <div class="col-3"><h5>Direccion de la reunion:</h5></div>
-                <div class="col" ><input id="Direccion" type="text" placeholder="Calle 32 #21-43 corea" required></div>
+            <div class="row m-4">
+                <div class="col-3"><h5>Día de la reunión:</h5></div>
+                <div class="col">
+                    <select id="op" name="thelist" onChange="combo(this, 'theinput')">
+                        <option value="LUNES">Lunes</option>
+                        <option value="MARTES">Martes</option>
+                        <option value="MIÉRCOLES">Miércoles</option>
+                        <option value="JUEVES">Jueves</option>
+                        <option value="VIERNES">Viernes</option>
+                        <option value="SÁBADO">Sábado</option>
+                        <option value="DOMINGO">Domingo</option>
+                    </select>
+                </div>
             </div>
-            <div class="row  m-4">
-                <div class="col-3"><h5>Nombre del lider:</h5></div>
-                <div class="col" ><input id="name_lider" type="text" placeholder="Nombre del Líder" required></div>
+            <div class="row m-4">
+                <div class="col-3"><h5>Dirección de la reunión:</h5></div>
+                <div class="col"><input id="Direccion" type="text" placeholder="Calle 32 #21-43 Corea" required></div>
             </div>
-            <div class="row  m-4">
-                <div class="col-3"><h5>Nombre del Anfitrión:</h5></div>
-                <div class="col" ><input id="name_anfitrion" type="text" placeholder="Nombre del Anfitrión" required></div>
+            <div class="row m-4">
+                <div class="col-3"><h5>Nombre del líder:</h5></div>
+                <div class="col"><input id="name_lider" type="text" placeholder="Nombre del Líder" required></div>
             </div>
-            <div class="row  m-4">
-            <div class="col-3"><h5>Nombre del sublider:</h5></div>
-            <div class="col" ><input id="name_sublider" type="text" placeholder="Nombre del Sublíder" required></div>
+            <div class="row m-4">
+                <div class="col-3"><h5>Nombre del anfitrión:</h5></div>
+                <div class="col"><input id="name_anfitrion" type="text" placeholder="Nombre del Anfitrión" required></div>
             </div>
-            <div class="row  m-4">
-                <div class="col-3"><h5>Nombre de la celula:</h5></div>
-                <div class="col" ><input id="name_celula" type="text" placeholder="Celula donde adriana calle 32#12-32" required></div>
+            <div class="row m-4">
+                <div class="col-3"><h5>Nombre del sublíder:</h5></div>
+                <div class="col"><input id="name_sublider" type="text" placeholder="Nombre del Sublíder" required></div>
             </div>
-            <!-- <h5>Numero total de asistentes a la celula:</h5>
-            <input id="asistencias_celula" type="number" placeholder="Número total de asistentes a la célula" required>
-            <h5>¿Cuántas personas nuevas asistieron?</h5>
-            <input id="new_people" type="number" placeholder="¿Cuántas personas nuevas asistieron?" required>
-            <h5>¿Cuántas personas ya asistieron a la iglesia?</h5>
-            <input id="old_people" type="number" placeholder="¿Cuántas personas ya asistieron a la iglesia?" required> -->
-
+            <div class="row m-4">
+                <div class="col-3"><h5>Nombre de la célula:</h5></div>
+                <div class="col"><input id="name_celula" type="text" placeholder="Célula donde Adriana Calle 32 #12-32" required></div>
+            </div>
             <button type="submit">AGREGAR</button>
+        </form>
         </form>
         <div class="button-container">
             <a href="/celulas"><button id="button-regresar" type="button">REGRESAR</button></a>
