@@ -124,7 +124,7 @@ input {
     </div>
 
     <!-- Modales -->
-    <div class="modal fade" id="registroModal" tabindex="-1">
+    <!-- <div class="modal fade" id="registroModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -152,11 +152,47 @@ input {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+const modal = (titulo,mensaje) => {
+            const modalHtml = `
+                        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registroModalLabel">${titulo}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    ${mensaje}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="closeDynamicModal()" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+            `
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+            function closeDynamicModal() {
+                const modal = document.getElementById('registroModal');
+                    if (modal) {
+                        modal.remove();
+                    }
+            }
+
+
+
         document.getElementById("form").addEventListener("submit", async function (event) {
             event.preventDefault();
     
@@ -225,12 +261,13 @@ input {
     
                 if (!response.ok) {
                     console.error("Error en la respuesta del servidor:", response.status);
-                    $('#errorModal').modal('show');
+                    modal('Error',`Error en el servidor 500`)
+                    $('#Modal').modal('show');
                     return;
                 }
     
-                console.log("Registro exitoso");
-                $('#registroModal').modal('show');
+                modal('Registro exitoso!',`La reunion se creo con exito!`)
+                $('#Modal').modal('show');
     
                 setTimeout(() => {
                     window.location.href = "/celulas";
@@ -240,7 +277,8 @@ input {
     
             } catch (error) {
                 console.error("Error al enviar los datos:", error);
-                alert("Hubo un error al enviar los datos. Inténtalo de nuevo.");
+                modal('Error envio de datos',`No se enviaron los datos correctamente, intente nuevamente`)
+                $('#Modal').modal('show');
             }
         });
     </script>

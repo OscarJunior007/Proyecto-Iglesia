@@ -115,7 +115,7 @@
         </div>
     </div>
 
-    <!-- Modal de Registro Exitoso -->
+    <!-- Modal de Registro Exitoso
     <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -133,10 +133,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Modal de Error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -153,7 +153,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <script>
         const form = document.getElementById("form");
@@ -170,6 +170,38 @@
    });
 
         
+        const modal = (titulo,mensaje) => {
+            const modalHtml = `
+                        <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registroModalLabel">${titulo}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    ${mensaje}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="closeDynamicModal()" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+            `
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+                function closeDynamicModal() {
+                    const modal = document.getElementById('registroModal');
+                        if (modal) {
+                            modal.remove();
+                        }
+                 }
 
         form.addEventListener("submit", async function (event) {
             event.preventDefault();
@@ -187,7 +219,8 @@
                 // Validación de campos
                 if (!dia_celula || !name_lider || !name_anfitrion || !name_sublider) {
                         console.error("Uno o más elementos del formulario no existen.");
-                        alert("Hubo un error con el formulario. Por favor, revisa los campos y vuelve a intentarlo.");
+                        modal('FALTAN CAMPOS','Uno o más elementos del formulario no estan escritos.')
+                        $('#Modal').modal('show'); 
                         return;
                     }
                 const data = {
@@ -214,14 +247,19 @@
                     });
 
                     if (!response.ok) {
-                        $('#errorModal').modal('show');
+                        modal('Error en el registro','Hubo un error al registrar la cedula, porfavor intente nuevamente')
+                        $('#Modal').modal('show'); 
                         return;
                     }
 
                     const result = await response.json();
                     console.log("Respuesta del backend:", result);
-                    $('#registroModal').modal('show'); // Mostrar el popup modal
+
+                    modal('Registro Exitoso','¡La celula ha sido registrada con éxito!')
+                    $('#Modal').modal('show'); // Mostrar el popup modal
+
                     localStorage.setItem('direccion',nombre_celula)
+
                     setTimeout(() => {
                         window.location.href = "celulas"; // Redirige después de 2 segundos
                         console.log("Delayed for 1 second.");
@@ -230,7 +268,8 @@
                     return;
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Hubo un error al enviar los datos. Por favor, intenta nuevamente.");
+                    modal('Error de envio de datos',`Hubo un error al enviar los datos, intenta nuevamente ${error}`)
+                    $('#Modal').modal('show'); 
                     throw error;
                 }
             };

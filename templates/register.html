@@ -95,7 +95,7 @@
         </div>
     
         <!-- Modal de éxito -->
-        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+        <!-- <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -114,8 +114,8 @@
             </div>
         </div>
     
-        <!-- Modal de error -->
-        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        Modal de error -->
+        <!-- <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -132,7 +132,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     
         <!-- Scripts de Bootstrap y jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -183,6 +183,39 @@ const me =  async () => {
 
     me()
 
+    const modal = (titulo,mensaje) => {
+            const modalHtml = `
+                        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registroModalLabel">${titulo}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    ${mensaje}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="closeDynamicModal()" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+            `
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+            function closeDynamicModal() {
+                const modal = document.getElementById('registroModal');
+                    if (modal) {
+                        modal.remove();
+                    }
+            }
+
     document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('form');
 
@@ -231,15 +264,17 @@ const me =  async () => {
                 // Mostrar el modal de error con el mensaje del backend
                 document.getElementById('titulo-modal').textContent = "Error en el registro";
                 document.getElementById('mensaje-modal').textContent = result.message || "La cédula ya está registrada.";
-                $('#errorModal').modal('show');
+                modal('El usuario ya existe',`La cedula ${data.user_cedula} ya ha sido registrada`)
+                $('#Modal').modal('show'); 
                 return;
             }
 
             // Mostrar el modal de éxito
-            $('#registroModal').modal('show');
+            modal('Registro exitoso!',`La cedula ${data.user_cedula} se ha creado con exito!`)
+            $('#Modal').modal('show'); 
 
             // Redirigir al usuario después de cerrar el modal
-            $('#registroModal').on('hidden.bs.modal', function () {
+            $('#Modal').on('hidden.bs.modal', function () {
                
             });
             this.reset();
@@ -247,7 +282,8 @@ const me =  async () => {
             console.error("Error:", error);
             document.getElementById('titulo-modal').textContent = "Error";
             document.getElementById('mensaje-modal').textContent = "Hubo un error al enviar los datos. Por favor, intenta nuevamente.";
-            $('#errorModal').modal('show');
+            modal('ERROR DE ENVIO DE DATOS',`Hubo un error al enviar los datos, intente nuevamente ${error}`)
+                $('#Modal').modal('show'); 
         }
     });
 
