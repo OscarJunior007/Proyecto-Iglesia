@@ -9,6 +9,8 @@ from fastapi.responses import StreamingResponse
 
 from fastapi import FastAPI, status, HTTPException, Depends
 from app.deps import get_current_user
+
+
 def setup(app:FastAPI):
     @app.get("/api/report")
     def report(user: SystemUser = Depends(get_current_user)):

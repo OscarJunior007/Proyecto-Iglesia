@@ -99,25 +99,69 @@
                 width: 90%;
             }
         }
-        .box-box{
-            justify-content: space-between;
-            gap: 60%;
+        .box-box {
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;  /* O usa space-between si quieres separarlos */
+    gap: 10px; /* Espacio entre botones */
+    width: 100%; /* Asegurar que ocupa el ancho disponible */
+}
+
+button {
+    display: inline-block;
+}
+.excel{
+    background-color: green;
+    width: 100%;
+    text-decoration: none;
+}
+
+a {
+            text-decoration: none;
+        }
+        .e{
+            width: 100%;
         }
        
+        .button-logout {
+            display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.button-logout button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
     </style>
 </head>
 <body>
+    
+
     <div class="container">
         <div class="box">
+            <div class="button-logout">
+                <button id="button_cerrear"> Cerrar sesión </button>
+                </div>
             <h1>Células registradas</h1>
             
             <div class="box-box"> 
                 <button id="nueva_celula" type="submit">Añadir nueva celula</button>
            
-                <button id="registro_usuario" type="submit">Registrar usuario</button>
+                <a href="/register"><button class="e" id="registro_usuario" type="submit">Registrar usuario</button></a>   
+                <div class="contenedor" id="contenedor">
+                
+               <button class="excel" id="button_excel" type="submit">Genrar reporte de reuniones</button>
                 <div class="contenedor" id="contenedor">
             </div>
-           
+            
 
 
             </div>
@@ -140,22 +184,102 @@
         </table> -->
         
     </div>
+    
     <script>
 
     //  const tabla = document.getElementById("tablaCelulas").getElementsByTagName("tbody")[0];
      const cedula = localStorage.getItem('cedula');
      const nueva_celula =  document.getElementById("nueva_celula");
      const button_registro_usuario =  document.getElementById("registro_usuario")
-     const profile = localStorage.getItem('profile')
-     console.log(profile)
+    //  const button_excel =  document.getElementById("button_excel")
+     const token =  localStorage.getItem('token')
 
-     function adminButton(){
-        if (profile === "ADMIN"){
-            button_registro_usuario.style.display = 'block';
-        }
+     var BASE_URL = "{{ base_url }}";
+
+     const report =  async () => {
+        const response = await fetch(`${BASE_URL}api/report`,{
+            headers:{
+                    'Authorization': `Bearer ${token}`   
+            }            
+            })
+            const contenidoDelArchivo = await response.blob();
+            const a = document.createElement("a");
+            const url = URL.createObjectURL(contenidoDelArchivo);
+            a.href = url;
+            a.download = "report.xls";
+            a.click();
+            URL.revokeObjectURL(url);
+
+            if(!response.ok){
+                
+
+                setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui")
+                    window.location.href = "login";
+                    }, 2000);
+
+    
+            }
+
+            
+    }
+
+    // CREAR REPORTE DE EXCEL
+    document.getElementById('button_excel').addEventListener('click', function() {
+        report()
+    });
+
+   
+
+    document.getElementById("button_cerrear").addEventListener("click", function() {
+        localStorage.clear(); 
+        window.location.href = "login"; 
+    });
+
+    
+     const me =  async () => {
+        const response = await fetch(`${BASE_URL}me`,{
+            headers:{
+                    'Authorization': `Bearer ${token}`   
+            }            
+            })
+
+          
+            if(!response.ok){
+                
+
+                setTimeout(() => {
+                    console.log("no tienes permiso para estar aqui")
+                    window.location.href = "login";
+                    }, 2000);
+
+    
+            }
+            
+            else{
+
+                data = await response.json()
+              
+                adminButton(data)
+            }
+
+    }
+
+ 
+    
+    
+    function adminButton(data){
+        if (data.profile === "ADMIN") {
+        button_registro_usuario.style.display = "block";
+        button_excel.style.display = "block";
+    } else {
+        button_registro_usuario.style.display = "none"; // Asegurarse de ocultarlo si no es admin
+        button_excel.style.display = "none";
+    }
+
      }
      
-     adminButton()
+     
 
      if(nueva_celula){
         nueva_celula.addEventListener('click', function() {
@@ -170,7 +294,7 @@
     
     const obtenerDatos = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/celulas/registradas/${cedula}`);
+                const response = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
                 if (!response.ok) {
                     throw new Error("Error al obtener los datos");
                 }
@@ -186,12 +310,6 @@
 
         // let nombre_celula =  localStorage.getItem('direccion')
         // console.log(nombre_celula)
-
-        
-
-
-
-
 
         //    // Función para llenar la tabla con los datos obtenidos
         //     const llenarTabla = (datos) => {
@@ -224,14 +342,14 @@
         // }
 
         const contenedor = document.getElementById("contenedor");
-
+       
         // Recorremos cada objeto dentro del array y creamos una caja para cada uno
         datos.forEach(celula => {
             let caja = document.createElement("div");
             caja.className = "caja";
             
             let button = document.createElement("button");
-            button.onclick = function aaa(){window.location.href='http://localhost:8000/reuniones/'+celula.id}
+            button.onclick = function aaa(){window.location.href=`${BASE_URL}/reuniones/${celula.id}`}
             button.className = "button";
 
             let titulo = document.createElement("h1");
@@ -254,7 +372,12 @@
 };
 
 // Ejecutar la función correctamente cuando la página cargue
-window.onload = cargarDatosIniciales;
+const onload = () => {
+    me()
+    cargarDatosIniciales()
+
+}
+window.onload = onload;
 
 
  

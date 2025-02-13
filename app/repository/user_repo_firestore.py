@@ -6,6 +6,7 @@ from uuid import uuid4
 import os 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './calendar-449323-536c5b560c7e.json'
 from google.cloud import  firestore
+
 class User(BaseModel):
    id : str = Field(default_factory = uuid4)
    nombre: str

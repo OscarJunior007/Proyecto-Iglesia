@@ -4,6 +4,15 @@ from app.schemas import UserOut, UserAuth
 from app.utils import get_hashed_password
 from uuid import uuid4
 
+from app.adapters import correo
+
+from jose import jwt
+from app.utils import (
+    ALGORITHM,
+    JWT_SECRET_KEY
+)
+from app.schemas import TokenPayload, SystemUser
+
 from app.repository import user_repo, user_repo_firestore
 from fastapi import FastAPI, status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2
@@ -13,7 +22,8 @@ from app.utils import (
     get_hashed_password,
     create_access_token,
     create_refresh_token,
-    verify_password
+    verify_password,
+   
 )
 from uuid import uuid4
 from app.deps import get_current_user
@@ -23,6 +33,8 @@ def setup(app: FastAPI):
      
     @app.post('/signup', summary="Create new user", response_model=UserOut)
     async def create_user(data: UserAuth,user: SystemUser = Depends(get_current_user)):
+        
+        print(f"esta esla informacion: {data.email}")
         if user.profile != 'ADMIN':
          raise HTTPException(status_code=403, detail=f"Prohibido")
         # querying database to check if user already exist
@@ -41,7 +53,12 @@ def setup(app: FastAPI):
                 'profile': "default",  
                 'id': str(uuid4())
         }
+
+        
         user_repo_firestore.create_user(user_repo.User(**user))     # saving user to database
+
+        correo.EnviarCorreo(data.email)
+
         return user
 
 
@@ -53,12 +70,13 @@ def setup(app: FastAPI):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cédula incorrecta o usuario no encontrado"
             )
-
+          
         return {
-            "access_token": create_access_token(user['cedula_user'],user['profile']),
-            "refresh_token": create_refresh_token(user['cedula_user'],user['profile']),
-            # "profile": create_refresh_token(user['profile'])
+            "access_token": create_access_token(user['cedula_user'], user['profile']),
+            "refresh_token": create_refresh_token(user['cedula_user'],user['profile'])
         }
+    
+   
 
            
     @app.get('/me', summary='Get details of currently logged in user', response_model=UserOut)

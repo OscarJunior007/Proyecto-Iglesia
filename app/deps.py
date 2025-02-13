@@ -27,7 +27,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
             token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
         )
         token_data = TokenPayload(**payload)
-        print(token_data)
+    
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
                 status_code = status.HTTP_401_UNAUTHORIZED,

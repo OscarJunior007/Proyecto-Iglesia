@@ -61,10 +61,10 @@
 </body>
 
 <script>
-    
+    var BASE_URL = "{{ base_url }}";
     let token = localStorage.getItem('token');
     const me =  async () => {
-        const response = await fetch('http://127.0.0.1:8000/me',{
+        const response = await fetch(`${BASE_URL}me`,{
             headers:{
                     'Authorization': `Bearer ${token}`   
             }            

@@ -82,7 +82,8 @@ def get_report():
 
         return result
    except Exception as e:
-     raise HTTPException(status_code= 500, detail= f"ERROR AL OBTENER LOS DATOS: {e}")
+    print(e)
+    return []
    
 @cache
 def _get_celula(id):

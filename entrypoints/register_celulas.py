@@ -6,8 +6,9 @@ from app.schemas import Celula
 from fastapi import FastAPI, status, HTTPException, Depends
 from app.deps import get_current_user
 def setup2(app:FastAPI):
+    
     @app.post("/register/celulas")
-    def register_celulas(celula: Celula,user: SystemUser = Depends(get_current_user)):
+    def register_celulas(celula: Celula, user: SystemUser = Depends(get_current_user)):
      try:
         
         celulas_repo_firestore.create_celula(celula)

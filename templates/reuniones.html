@@ -52,6 +52,45 @@
                 width: 90%;
             }
         }
+        .button-container {
+    display: flex;
+    justify-content: flex-end; /* Alinear el botón a la derecha */
+    margin-top: 10px; /* Espacio entre el formulario y el botón */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el texto y el input */
+    justify-content: space-between; /* Asegura buena distribución */
+    width: 100%;
+}
+
+h5 {
+    margin: 0;
+    font-size: 18px;
+    flex: 1; /* Permite que el h5 ocupe el espacio necesario */
+    text-align: left; /* Alinear el texto a la izquierda */
+    font-weight: bold;
+}
+
+input {
+    flex: 2; /* Hace que los inputs sean más anchos */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.button{
+    width: 30%;
+   
+}
     </style>
 </head>
 <body>
@@ -61,16 +100,27 @@
         <div id="celula-data" data-celula-id="{{ id_celula }}"></div>
 
         <form id="form">
-            <h5>Fecha de la reunión:</h5>
-            <input id="fecha_celula" type="date" required>
-            <h5>Número total de asistentes:</h5>
-            <input id="asistencias_celula" type="number" required>
-            <h5>¿Cuántas personas nuevas asistieron?</h5>
-            <input id="new_people" type="number" required>
-            <h5>¿Cuántas personas ya asistieron a la iglesia?</h5>
-            <input id="old_people" type="number" required>
-            <button type="submit">AGREGAR</button>
+            <div class="form-group">
+                <h5>Fecha de la reunión:</h5>
+                <input id="fecha_celula" type="date" required>
+            </div>
+            <div class="form-group">
+                <h5>Número total de asistentes:</h5>
+                <input id="asistencias_celula" type="number" required>
+            </div>
+            <div class="form-group">
+                <h5>¿Cuántas personas nuevas asistieron?</h5>
+                <input id="new_people" type="number" required>
+            </div>
+            <div class="form-group">
+                <h5>¿Cuántas personas ya asistieron a la iglesia?</h5>
+                <input id="old_people" type="number" required>
+            </div>
+            <button class="button" type="submit">AGREGAR</button>
         </form>
+        <div class="button-container">
+            <a href="/celulas"><button id="button-regresar" type="button">REGRESAR</button></a>
+        </div>
     </div>
 
     <!-- Modales -->
@@ -115,7 +165,9 @@
             const asistencias_celula = document.getElementById("asistencias_celula").value;
             const new_people = document.getElementById("new_people").value;
             const asisten_iglesia = document.getElementById("old_people").value;
-            
+            const button_regresar =  document.getElementById("button-regresar");
+
+
             // Obtener ID de célula
             const celulaDataElement = document.getElementById("celula-data");
             if (!celulaDataElement) {
@@ -161,8 +213,11 @@
     
             console.log("Enviando datos al backend:", data);
             let token = localStorage.getItem('token');
+            
+            var BASE_URL = "{{ base_url }}";
+
             try {
-                let response = await fetch(`http://127.0.0.1:8000/register/reuniones/${id_celula}`, {
+                let response = await fetch(`${BASE_URL}reuniones/${id_celula}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${token}`   } ,
                     body: JSON.stringify(data)

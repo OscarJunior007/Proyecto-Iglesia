@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Union, Any
 from jose import jwt
+from app.schemas import TokenPayload, SystemUser
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
@@ -39,3 +40,7 @@ def create_refresh_token(subject: Union[str, Any], profile: str| Any, expires_de
     to_encode = {"exp": expires_delta, "sub": str(subject),"profile":profile}
     encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)
     return encoded_jwt
+
+
+
+

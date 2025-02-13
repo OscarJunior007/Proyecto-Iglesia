@@ -30,41 +30,55 @@ reports.setup(app)
 register_celulas.setup2(app)
 register_reuniones.setup3(app)
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/register", response_class=HTMLResponse)
 def root(request: Request):
-    return templateJinja.TemplateResponse("register.html",{
-        "request":request,
-        # "save_clients": save_clients    
-})
+    return templateJinja.TemplateResponse("register.html", {
+        "request": request,
+        "base_url": str(request.base_url)  # URL base para usar en Jinja
+    })
 
 @app.get("/login", response_class=HTMLResponse)
 def login_form(request: Request):
-    return templateJinja.TemplateResponse("login.html", {"request":request})
+    return templateJinja.TemplateResponse("login.html", {
+        "request": request,
+        "base_url": str(request.base_url)
+    })
 
 @app.get("/home", response_class=HTMLResponse)
-def login_form(request: Request):
-    return templateJinja.TemplateResponse("home.html", {"request":request})
-
+def home(request: Request):
+    return templateJinja.TemplateResponse("home.html", {
+        "request": request,
+        "base_url": str(request.base_url)
+    })
 
 @app.get("/create_celula", response_class=HTMLResponse)
-def login_form(request: Request):
-    return templateJinja.TemplateResponse("create_celula.html", {"request":request})
+def create_celula(request: Request):
+    return templateJinja.TemplateResponse("create_celula.html", {
+        "request": request,
+        "base_url": str(request.base_url)
+    })
 
 @app.get("/celulas", response_class=HTMLResponse)
-def login_form(request: Request):
-    return templateJinja.TemplateResponse("celulas.html", {"request":request})
+def celulas(request: Request):
+    return templateJinja.TemplateResponse("celulas.html", {
+        "request": request,
+        "base_url": str(request.base_url)
+    })
 
 @app.get("/reuniones/{id_celula}", response_class=HTMLResponse)
-def login_form(request: Request, id_celula:str):
-   
+def reuniones(request: Request, id_celula: str):
+    return templateJinja.TemplateResponse("reuniones.html", {
+        "request": request,
+        "base_url": str(request.base_url),
+        "id_celula": id_celula
+    })
 
-    return templateJinja.TemplateResponse("reuniones.html", {"request":request,
-                                                             "id_celula": id_celula})
-    
 @app.get("/report", response_class=HTMLResponse)
-def login_form(request: Request):
-    return templateJinja.TemplateResponse("report.html", {"request":request})
-
+def report(request: Request):
+    return templateJinja.TemplateResponse("report.html", {
+        "request": request,
+        "base_url": str(request.base_url)
+    })
 
 
 import uvicorn

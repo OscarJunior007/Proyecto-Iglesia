@@ -7,10 +7,13 @@
 </head>
 <body>
     <script>
-        
-        let token = localStorage.getItem('token');
+    
+    
+    var BASE_URL = "{{ base_url }}";
+    
+    let token = localStorage.getItem('token');
     const me =  async () => {
-        const response = await fetch('http://127.0.0.1:8000/api/report',{
+        const response = await fetch(`${BASE_URL}api/report`,{
             headers:{
                     'Authorization': `Bearer ${token}`   
             }            
@@ -32,15 +35,6 @@
                     }, 2000);
 
     
-            }
-
-            else{
-                document.getElementById("registroButton").addEventListener("click", function(event) {
-                    event.preventDefault();  // Prevenir el comportamiento predeterminado de submit (si está dentro de un formulario)
-                    
-                    // Asegúrate de que la ruta del archivo HTML sea correcta
-                    window.location.href = "create_celula";  // Ruta del archivo HTML
-                });
             }
 
             

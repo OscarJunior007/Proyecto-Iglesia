@@ -6,12 +6,14 @@ from uuid import uuid4
 class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
+   
     
     
 class TokenPayload(BaseModel):
     sub: str = None
     exp: int = None
     profile: str = 'DEFAULT' 
+
 class UserAuth(BaseModel):
     email: str = Field(..., description="user email")
     celular: str = Field(...,  description="user celular")
