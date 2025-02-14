@@ -30,6 +30,14 @@ reports.setup(app)
 register_celulas.setup2(app)
 register_reuniones.setup3(app)
 
+
+@app.get("/", response_class=HTMLResponse)
+def root(request: Request):
+    return templateJinja.TemplateResponse("login.html", {
+        "request": request,
+        "base_url": str(request.base_url)  # URL base para usar en Jinja
+    })
+
 @app.get("/register", response_class=HTMLResponse)
 def root(request: Request):
     return templateJinja.TemplateResponse("register.html", {
