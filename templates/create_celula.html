@@ -58,6 +58,18 @@
     margin-top: 10px; /* Espacio entre el formulario y el botón */
 }
 
+.form-scroll {
+    max-height: 500px; /* Altura máxima del contenedor */
+    overflow-y: auto;  /* Habilitar scroll vertical */
+    padding: 20px;     /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde opcional */
+    border-radius: 8px;     /* Bordes redondeados */
+    background-color: #fff; /* Fondo blanco */
+}
+.button-agregar{
+    background-color: green;
+    border-radius: 10%;
+}
     </style>
      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
      <!-- Bootstrap JS and dependencies -->
@@ -66,7 +78,7 @@
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container form-scroll">
         <h1>Agregar nueva célula</h1>
         <form id="form" class="formulario">
             <div class="row m-4">
@@ -89,7 +101,7 @@
             </div>
             <div class="row m-4">
                 <div class="col-3"><h5>Dirección de la reunión:</h5></div>
-                <div class="col"><input id="Direccion" type="text" placeholder="Calle 32 #21-43 Corea" required></div>
+                <div class="col"><input id="Direccion" type="text" placeholder=" EJ: calle 32 #21-43 " required></div>
             </div>
             <div class="row m-4">
                 <div class="col-3"><h5>Nombre del líder:</h5></div>
@@ -105,9 +117,9 @@
             </div>
             <div class="row m-4">
                 <div class="col-3"><h5>Nombre de la célula:</h5></div>
-                <div class="col"><input id="name_celula" type="text" placeholder="Célula donde Adriana Calle 32 #12-32" required></div>
+                <div class="col"><input id="name_celula" type="text" placeholder="EJ: Llamas de fuego" required></div>
             </div>
-            <button type="submit">AGREGAR</button>
+            <button class="button-agregar" type="submit">Agregar celula</button>
         </form>
         </form>
         <div class="button-container">
