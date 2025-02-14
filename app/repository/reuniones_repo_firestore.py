@@ -49,19 +49,19 @@ def create_reunion(datos: Reunion):
 
     
 
-def extract_celula(celula):
-   db = firestore.Client()
+def extract_reunion(id):
+    db = firestore.Client()
 
-   try:
-        usuarios_ref = db.collection('celulas')
-        query = usuarios_ref.where('lider_cedula', '==', f'{celula}')
+    try:
+        usuarios_ref = db.collection('reuniones')
+        query = usuarios_ref.where('celulaId', '==', id)
         docs = query.stream()
 
+        reuniones = [doc.to_dict() for doc in docs] 
+        return reuniones if reuniones else []
 
-        return [doc.to_dict() for doc in docs] if docs else []
-
-   except Exception as e:
-     raise HTTPException(status_code= 500, detail= f"ERROR AL OBTENER LOS DATOS: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"ERROR AL OBTENER LOS DATOS: {e}")
 
 
 

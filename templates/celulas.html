@@ -28,6 +28,11 @@
             border: 1px solid #ff758c; /* Borde sutil */
         }
 
+        .button-container {
+    display: flex;
+    gap: 10px;
+  }
+
         .caja h1 {
             font-size: 18px;
             color: #333; /* Color del texto */
@@ -139,6 +144,32 @@ a {
     cursor: pointer;
     border-radius: 5px;
 }
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+  }
+  .modal-content {
+    max-height: 80vh; /* Altura máxima del modal */
+    overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .close-button {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+  }
 
     </style>
      <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
@@ -301,15 +332,31 @@ a {
         console.log("el elemento no se encuentra en el doom")
      }
     
+
+     const obtenerDatosReuniones = async (id) => {
+            try {
+                const response = await fetch(`${BASE_URL}api/reuniones/registradas?id_celula=${id}`);
+                if (!response.ok) {
+                    throw new Error("Error al obtener los datos");
+                }
+                const datos = await response.json();
+                console.log("Reuniones recibidas:",datos)
+                return datos;
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un error al obtener las reuniones. Por favor, intenta nuevamente.");
+                throw error;
+            }
+        };
     
-    const obtenerDatos = async () => {
+    const obtenerDatosCelulas = async () => {
             try {
                 const response = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
                 if (!response.ok) {
                     throw new Error("Error al obtener los datos");
                 }
                 const datos = await response.json();
-                console.log("Datos recibidos",datos)
+                console.log("Celulas recibidas",datos)
                 return datos;
             } catch (error) {
                 console.error("Error:", error);
@@ -318,49 +365,91 @@ a {
             }
         };
 
-        // let nombre_celula =  localStorage.getItem('direccion')
-        // console.log(nombre_celula)
+        const mostrarModalReuniones = (reuniones, nombre) => {
+    let modal = document.createElement('div');
+    modal.className = 'modal';
 
-        //    // Función para llenar la tabla con los datos obtenidos
-        //     const llenarTabla = (datos) => {
-        //     console.log(datos); // Añadir esto para verificar la estructura de los datos
-        //     tabla.innerHTML = ""; // Limpiar la tabla antes de llenarla
+    let modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
 
-        //     datos.forEach((dato) => {
-        //         const nuevaFila = tabla.insertRow();
-        //         nuevaFila.innerHTML = `
-        //     <td>${dato.lider_cedula ?? 'No disponible'}</td>
-        //     <td>${dato.date_celula  ?? 'No disponible'}</td>
-        //     <td>${dato.direccion  ?? 'No disponible'}</td>
-        //     <td>${dato.name_lider  ?? 'No disponible'}</td>
-        //     <td>${dato.name_anfitrion ?? 'No disponible'}</td>
-        //     <td>${dato.name_sublider  ?? 'No disponible'}</td>
-        //     <td>${dato.asistencias_celula  ?? 'No disponible'}</td>
-        //     <td>${dato.new_people  ?? 'No disponible'}</td>
-        //     <td>${dato.old_people  ?? 'No disponible'}</td>
-        // `;
-        //     });
-        // };
+    let closeButton = document.createElement('span');
+    closeButton.className = 'close-button';
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = () => modal.remove();
+
+    modalContent.appendChild(closeButton);
+
+    let titulo = document.createElement('h2');
+    titulo.textContent = `Reuniones registradas ${nombre}`;
+    modalContent.appendChild(titulo);
+
+    if (reuniones.length === 0) {
+      let noData = document.createElement('p');
+      noData.textContent = 'No hay reuniones registradas.';
+      modalContent.appendChild(noData);
+    } else {
+      reuniones.forEach(reunion => {
+        let item = document.createElement('div');
+        item.innerHTML = `
+          <p><strong>Fecha:</strong> ${reunion.fecha_reunion}</p>
+          <p><strong>Asisten a iglesia:</strong> ${reunion.asisten_iglesia}</p>
+          <p><strong>Asistencias a célula:</strong> ${reunion.asistencias_celula}</p>
+          <p><strong>Nuevas personas:</strong> ${reunion.new_people}</p>
+          <hr>
+        `;
+        modalContent.appendChild(item);
+      });
+    }
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+  };
+                    
     
         const cargarDatosIniciales = async () => {
     try {
-        const datos = await obtenerDatos();
-
-        // if (!Array.isArray(datos) || datos.length === 0) {
-        //     console.error("No se encontraron datos para mostrar.");
-        //     return;
-        // }
-
+        const datos = await obtenerDatosCelulas();
+       
         const contenedor = document.getElementById("contenedor");
        
         // Recorremos cada objeto dentro del array y creamos una caja para cada uno
-        datos.forEach(celula => {
+        
+        // for(let celula of datos){
+        //      const reuniones = await obtenerDatosReuniones(celula.id)
+        //     let caja = document.createElement("div");
+        //     caja.className = "caja";
+            
+        //     let button = document.createElement("button");
+        //     button.onclick = function aaa(){window.location.href=`${BASE_URL}reuniones/${celula.id}`}
+        //     button.className = "button";
+
+        //     let titulo = document.createElement("h1");
+        //     titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
+
+        //     // let text_button = document.createElement("h5");
+        //     button.textContent ="Registrar reunion";
+
+        //     caja.appendChild(titulo);
+        //     caja.appendChild(button);
+
+        //     // button.appendChild(text_button)
+        //     contenedor.appendChild(caja); 
+        // }
+        datos.forEach( async (celula) => {
+            
+            const reuniones = await obtenerDatosReuniones(celula.id)
+           
             let caja = document.createElement("div");
             caja.className = "caja";
             
             let button = document.createElement("button");
-            button.onclick = function aaa(){window.location.href=`${BASE_URL}/reuniones/${celula.id}`}
+            button.onclick = function aaa(){window.location.href=`${BASE_URL}reuniones/${celula.id}`}
             button.className = "button";
+
+            let buttonReuniones = document.createElement("button");
+            buttonReuniones.textContent = 'Ver reuniones';
+            buttonReuniones.onclick = () => mostrarModalReuniones(reuniones,celula.nombre_celula);
 
             let titulo = document.createElement("h1");
             titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
@@ -368,11 +457,17 @@ a {
             // let text_button = document.createElement("h5");
             button.textContent ="Registrar reunion";
 
+            let buttonContainer = document.createElement('div');
+            buttonContainer.className = 'button-container';
+            buttonContainer.appendChild(button);
+            buttonContainer.appendChild(buttonReuniones);
+
             caja.appendChild(titulo);
-            caja.appendChild(button);
+            
 
             // button.appendChild(text_button)
             contenedor.appendChild(caja); 
+            caja.appendChild(buttonContainer);
             
          });
 

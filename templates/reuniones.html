@@ -233,7 +233,7 @@ const modal = (titulo,mensaje) => {
                 return;
             }
             
-            if (asistencias_celula < new_people+asisten_iglesia) {
+            if (asistencias_celula < parseInt(new_people) + parseInt(asisten_iglesia)) {
                 alert("El total de asistentes no puede ser menor a la suma de nuevas personas y personas a la iglesia");
                 return;
             }
@@ -253,7 +253,7 @@ const modal = (titulo,mensaje) => {
             var BASE_URL = "{{ base_url }}";
 
             try {
-                let response = await fetch(`${BASE_URL}reuniones/${id_celula}`, {
+                let response = await fetch(`${BASE_URL}register/reuniones/${id_celula}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${token}`   } ,
                     body: JSON.stringify(data)

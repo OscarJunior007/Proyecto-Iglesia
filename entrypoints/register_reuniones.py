@@ -7,7 +7,7 @@ from app.deps import get_current_user
 
 def setup3(app:FastAPI):
     @app.post("/register/reuniones/{id_celula}")
-    def register_reuniones(reunion: Reunion,user: SystemUser = Depends(get_current_user)):
+    def register_reuniones(reunion: Reunion, user: SystemUser = Depends(get_current_user)):
      try:
         
         reuniones_repo_firestore.create_reunion(reunion)
@@ -18,10 +18,14 @@ def setup3(app:FastAPI):
         raise HTTPException(status_code=500, detail=f"Error interno en el servidor: {e}")
      
 
-    # @app.get("/celulas/registradas/{cedula_user}")
-    # def get_celulas(cedula_user: str):
-    #    datos = celulas_repo_firestore.extract_celula(cedula_user)
-       
-    #    if not datos:
-    #       raise HTTPException(status_code=404, detail="No se encontraron datos para esta cédula") 
-    #    return datos
+    @app.get("/api/reuniones/registradas")
+    def get_celulas(id_celula: str):
+        
+      try:
+         datos = reuniones_repo_firestore.extract_reunion(id_celula)
+      except Exception as e:
+         raise HTTPException(status_code=404, detail="No se encontraron datos para esta reunion") 
+            
+      if not datos:
+         return[]
+      return datos
