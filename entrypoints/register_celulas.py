@@ -21,11 +21,15 @@ def setup2(app:FastAPI):
 
     @app.get("/celulas/registradas/{cedula_user}")
     def get_celulas(cedula_user: str):
-       datos = celulas_repo_firestore.extract_celula(cedula_user)
-       
-       if not datos:
+      
+      try:
+         datos = celulas_repo_firestore.extract_celula(cedula_user)
+      except Exception as e:
+         raise HTTPException(status_code=404, detail="No se encontraron datos para esta cédula") 
+ 
+      if not datos:
           raise HTTPException(status_code=404, detail="No se encontraron datos para esta cédula") 
-       return datos
+      return datos
        
           
       
