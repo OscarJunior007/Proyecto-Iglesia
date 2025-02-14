@@ -70,6 +70,13 @@
     background-color: green;
     border-radius: 10%;
 }
+
+.row.m-4 .col-3 h5 {
+    margin-right: 80%; /* Ajusta el valor según lo necesites */
+}
+
+
+
     </style>
      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
      <!-- Bootstrap JS and dependencies -->
@@ -82,7 +89,7 @@
         <h1>Agregar nueva célula</h1>
         <form id="form" class="formulario">
             <div class="row m-4">
-                <div class="col-3"><h5>Cédula líder:</h5></div>
+                <div class="col-3 "><h5>Cédula líder:</h5></div>
                 <div class="col"><input id="lider_celula" type="text" placeholder="Día de la reunión" required readonly disabled></div>
             </div>
             <div class="row m-4">
@@ -168,8 +175,29 @@
     </div> -->
 
     <script>
-        const form = document.getElementById("form");
-        const cedula = localStorage.getItem('cedula');
+
+            const form = document.getElementById("form");
+            const cedula = localStorage.getItem('cedula');
+
+            var BASE_URL = "{{ base_url }}";
+            window.addEventListener('DOMContentLoaded', async () => {
+                 try {
+                        const checkUserData = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
+                            
+                        if (checkUserData.ok) {
+                            document.getElementById("button-regresar").style.display =  'block';
+                        } else if (checkUserData.status === 404) {
+                           
+                            document.getElementById("button-regresar").style.display = 'none';
+                        } else {
+                            console.error('Error al obtener los datos del usuario');
+                        }
+                    } catch (error) {
+                        console.error('Error en la solicitud:', error);
+                    }
+            });
+                    
+       
         if (cedula) {
             document.getElementById('lider_celula').value = cedula;
         } else {
@@ -247,7 +275,7 @@
                 };
                 console.log(data)
                 let token = localStorage.getItem('token');
-                var BASE_URL = "{{ base_url }}";
+                
                 try {
                     let response = await fetch(`${BASE_URL}register/celulas`, {
                         method: 'POST',
