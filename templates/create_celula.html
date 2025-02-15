@@ -59,9 +59,9 @@
 }
 
 .form-scroll {
-    max-height: 500px; /* Altura máxima del contenedor */
+    max-height: 100%; /* Altura máxima del contenedor */
     overflow-y: auto;  /* Habilitar scroll vertical */
-    padding: 20px;     /* Espaciado interno */
+    padding: 50px;     /* Espaciado interno */
     border: 1px solid #ccc; /* Borde opcional */
     border-radius: 8px;     /* Bordes redondeados */
     background-color: #fff; /* Fondo blanco */
@@ -182,12 +182,15 @@
             var BASE_URL = "{{ base_url }}";
             window.addEventListener('DOMContentLoaded', async () => {
                  try {
-                        const checkUserData = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
+                    let token = localStorage.getItem('token');
+                    const checkUserData = await fetch(`${BASE_URL}celulas/registradas`,{headers:{
+                    'Authorization': `Bearer ${token}`
+                }});
                             
                         if (checkUserData.ok) {
                             document.getElementById("button-regresar").style.display =  'block';
                         } else if (checkUserData.status === 404) {
-                           
+
                             document.getElementById("button-regresar").style.display = 'none';
                         } else {
                             console.error('Error al obtener los datos del usuario');

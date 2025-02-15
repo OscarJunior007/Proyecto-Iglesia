@@ -64,11 +64,12 @@
             justify-content: flex-end;
         }
     </style>
-     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-     <!-- Bootstrap JS and dependencies -->
-     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <!-- Bootstrap JS and dependencies -->
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </head>
 <body>
     
@@ -135,14 +136,14 @@
         </div> -->
     
         <!-- Scripts de Bootstrap y jQuery -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+       
 
     <script>
 
-let token = localStorage.getItem('token');
 var BASE_URL = "{{ base_url }}";
 const me =  async () => {
+    
+        let token = localStorage.getItem('token');
         const response = await fetch(`${BASE_URL}me`,{
             headers:{
                     'Authorization': `Bearer ${token}`   
@@ -183,109 +184,91 @@ const me =  async () => {
 
     me()
 
-    const modal = (titulo,mensaje) => {
+            const modal = (titulo, mensaje) => {
+            const modalId = 'dynamicModal'; 
             const modalHtml = `
-                        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="registroModalLabel">${titulo}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    ${mensaje}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" onclick="closeDynamicModal()" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                </div>
+                <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="${modalId}Label">${titulo}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ${mensaje}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" onclick="closeDynamicModal('${modalId}')" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             </div>
                         </div>
                     </div>
-            
-            
-            `
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-        }
+                </div>
+            `;
 
-            function closeDynamicModal() {
-                const modal = document.getElementById('registroModal');
-                    if (modal) {
-                        modal.remove();
-                    }
+            // Eliminar modales anteriores
+            const existingModal = document.getElementById(modalId);
+            if (existingModal) {
+                existingModal.remove();
             }
 
-    document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('form');
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault();
+            // Mostrar el modal usando jQuery
+            $(`#${modalId}`).modal('show');
+        }
 
-        // Limpiar errores previos
-        document.querySelectorAll('.error').forEach(function (error) {
-            error.textContent = '';
+        function closeDynamicModal(modalId) {
+            $(`#${modalId}`).modal('hide');
+            setTimeout(() => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.remove();
+            }, 300);
+        }
+
+        // ✅ Evento para escuchar el cierre automático y limpiar
+        $(document).on('hidden.bs.modal', '#dynamicModal', function () {
+            $(this).remove();
         });
 
-        // Validar el formulario antes de enviar los datos
-        if (!validarFormulario()) {
-            return; // Detener el envío si el formulario no es válido
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('form').addEventListener("submit", async function (event) {
+    event.preventDefault();
+    document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    if (!validarFormulario()) return;
+
+    try {
+        const data = {
+            user_nombre: form.nombre.value,
+            email: form.correo.value,
+            celular: form.celular.value,
+            user_direccion: form.direccion.value,
+            user_cedula: form.cedula.value
+        };
+        
+        const response = await fetch(`${BASE_URL}signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (!response.ok) {
+            modal('Error en el registro', result.message || `La cédula ${data.user_cedula} ya está registrada.`);
+        } else {
+            modal('Registro exitoso', `La cédula ${data.user_cedula} se ha creado con éxito.`);
+            form.reset();
         }
+    } catch (error) {
+        modal('ERROR DE ENVIO DE DATOS', `Hubo un error al enviar los datos, intente nuevamente: ${error}`);
+    }
+});
 
-        // Enviar datos al backend
-        try {
-            const nombre = document.getElementById('nombre').value;
-            const correo = document.getElementById('correo').value;
-            const celular = document.getElementById('celular').value;
-            const direccion = document.getElementById('direccion').value;
-            const cedula = document.getElementById('cedula').value;
-
-            const data = {
-                user_nombre: nombre,
-                email: correo,
-                celular: celular,
-                user_direccion: direccion,
-                user_cedula: cedula
-            };
-
-            const response = await fetch(`${BASE_URL}signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`   
-
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                // Mostrar el modal de error con el mensaje del backend
-                document.getElementById('titulo-modal').textContent = "Error en el registro";
-                document.getElementById('mensaje-modal').textContent = result.message || "La cédula ya está registrada.";
-                modal('El usuario ya existe',`La cedula ${data.user_cedula} ya ha sido registrada`)
-                $('#Modal').modal('show'); 
-                return;
-            }
-
-            // Mostrar el modal de éxito
-            modal('Registro exitoso!',`La cedula ${data.user_cedula} se ha creado con exito!`)
-            $('#Modal').modal('show'); 
-
-            // Redirigir al usuario después de cerrar el modal
-            $('#Modal').on('hidden.bs.modal', function () {
-               
-            });
-            this.reset();
-        } catch (error) {
-            console.error("Error:", error);
-            document.getElementById('titulo-modal').textContent = "Error";
-            document.getElementById('mensaje-modal').textContent = "Hubo un error al enviar los datos. Por favor, intenta nuevamente.";
-            modal('ERROR DE ENVIO DE DATOS',`Hubo un error al enviar los datos, intente nuevamente ${error}`)
-                $('#Modal').modal('show'); 
-        }
-    });
 
     function validarFormulario() {
     let esValido = true;
@@ -368,7 +351,7 @@ const me =  async () => {
     }
 
     return esValido;
-}
+    }
 });
     </script>
     

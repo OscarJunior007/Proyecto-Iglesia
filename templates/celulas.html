@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Células</title>
     <style>
+       /* Reset básico para evitar márgenes y paddings no deseados */
+        * {
+
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box; /* Asegura que el padding y el borde estén incluidos en el tamaño del elemento */
+        }
+        html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+}
 
         .box {
             display: flex;
@@ -43,24 +56,19 @@
         }
         
        
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-        }
+      
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            animation: fadeIn 1s ease-in-out;
-        }
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    animation: fadeIn 1s ease-in-out;
+    max-height: 90vh; /* Altura máxima del contenedor */
+    overflow-y: auto; /* Habilitar scroll vertical */
+    width: 90%; /* Ancho del contenedor */
+    margin: 20px auto; /* Centrar el contenedor */
+}
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -80,6 +88,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            display: inline-block;
         }
         button:hover {
             background: #ff4757;
@@ -112,9 +121,7 @@
     width: 100%; /* Asegurar que ocupa el ancho disponible */
 }
 
-button {
-    display: inline-block;
-}
+
 .excel{
     background-color: green;
     width: 100%;
@@ -170,7 +177,26 @@ a {
     font-size: 24px;
     cursor: pointer;
   }
+  .button-register{
+    height: 5px;
+  }
+  .fixed-buttons {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 1000; /* Para asegurarte de que los botones estén encima del contenido */
+    padding: 10px 0; /* Añade un poco de padding si es necesario */
+}
 
+/* Contenedor principal con desplazamiento */
+.scrollable-content {
+    margin-top: 50px; /* Añade margen superior para evitar que los botones fijos cubran el contenido */
+    overflow-y: auto; /* Permitir desplazamiento vertical */
+    height: calc(100vh - 50px); /* Ajusta la altura del contenido para que no se superponga con los botones */ 
+
+}
+    
     </style>
      <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
      <!-- Bootstrap JS and dependencies -->
@@ -182,6 +208,7 @@ a {
 <body>
     
 
+    
     <div class="container">
         <div class="box">
             <div class="button-logout">
@@ -195,31 +222,10 @@ a {
                 <a href="/register"><button class="e" id="registro_usuario" type="submit">Registrar usuario</button></a>   
                 <div class="contenedor" id="contenedor">
                 
-               <button class="excel" id="button_excel" type="submit">Genrar reporte de reuniones</button>
+                        <button class="excel" id="button_excel" type="submit">Generar reporte de reuniones</button>
                 <div class="contenedor" id="contenedor">
             </div>
-            
-
-
-            </div>
-        <!-- <table id="tablaCelulas">
-            <thead>
-                <tr>
-                    <th>Cedula lider</th>
-                    <th>Fecha</th>
-                    <th>Direccion</th>
-                    <th>Líder</th>
-                    <th>Anfitrión</th>
-                    <th>Sublíder</th>
-                    <th>Asistentes</th>
-                    <th>Nuevos</th>
-                    <th>Recurrentes</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-            </tbody>
-        </table> -->
-        
+             
     </div>
     
     <script>
@@ -374,9 +380,8 @@ a {
             }
         };
 
-        const mostrarModalReuniones = async  ( nombre,celula_id) => {
-
-    const reuniones = await obtenerDatosReuniones(celula_id)
+        const mostrarModalReuniones = async (nombre, celula_id) => {
+    const reuniones = await obtenerDatosReuniones(celula_id);
     let modal = document.createElement('div');
     modal.className = 'modal';
 
@@ -387,7 +392,6 @@ a {
     closeButton.className = 'close-button';
     closeButton.innerHTML = '&times;';
     closeButton.onclick = () => modal.remove();
-
     modalContent.appendChild(closeButton);
 
     let titulo = document.createElement('h2');
@@ -395,30 +399,49 @@ a {
     modalContent.appendChild(titulo);
 
     if (reuniones.length === 0) {
-      let noData = document.createElement('p');
-      noData.textContent = 'No hay reuniones registradas.';
-      modalContent.appendChild(noData);
+        let noData = document.createElement('p');
+        noData.textContent = 'No hay reuniones registradas.';
+        modalContent.appendChild(noData);
     } else {
-      reuniones.forEach(reunion => {
-        let item = document.createElement('div');
-        item.innerHTML = `
-          <p><strong>Fecha:</strong> ${reunion.fecha_reunion}</p>
-          <p><strong>Asisten a iglesia:</strong> ${reunion.asisten_iglesia}</p>
-          <p><strong>Asistencias a célula:</strong> ${reunion.asistencias_celula}</p>
-          <p><strong>Nuevas personas:</strong> ${reunion.new_people}</p>
-          <hr>
+        let table = document.createElement('table');
+        table.className = 'table table-striped';
+
+        let thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th style="width: 200px;">Fecha</th>
+                <th>Asistencias Célula</th>
+                <th>Asisten Iglesia</th>
+                <th>Nuevas Personas</th>
+            </tr>
         `;
-        modalContent.appendChild(item);
-      });
+        table.appendChild(thead);
+
+        let tbody = document.createElement('tbody');
+
+        reuniones.forEach(reunion => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="width: 200px;">${reunion.fecha_reunion}</td>
+                <td>${reunion.asistencias_celula}</td>
+                <td>${reunion.asisten_iglesia}</td>
+                <td>${reunion.new_people}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        modalContent.appendChild(table);
     }
 
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
     modal.style.display = 'block';
-  };
+};
+
                     
     
-        const cargarDatosIniciales = async () => {
+    const cargarDatosIniciales = async () => {
     try {
         const datos = await obtenerDatosCelulas();
         
@@ -429,8 +452,6 @@ a {
         
         datos.forEach( async (celula) => {
             
-           
-           
             let caja = document.createElement("div");
             caja.className = "caja";
 
@@ -439,7 +460,7 @@ a {
             
             let button = document.createElement("button");
             button.onclick = function aaa(){window.location.href=`${BASE_URL}reuniones/${celula.id}`}
-            button.className = "button";
+            button.className = "button-register";
             button.textContent ="Registrar reunion";
  
 
@@ -449,7 +470,7 @@ a {
 
            
 
-            let text_button = document.createElement("h5");
+            let text_button = document.createElement("span");
             
 
             let buttonContainer = document.createElement('div');
