@@ -229,7 +229,7 @@ a {
      const nueva_celula =  document.getElementById("nueva_celula");
      const button_registro_usuario =  document.getElementById("registro_usuario")
     //  const button_excel =  document.getElementById("button_excel")
-     const token =  localStorage.getItem('token')
+   
 
      var BASE_URL = "{{ base_url }}";
 
@@ -237,6 +237,7 @@ a {
      
      
      const report =  async () => {
+        const token =  localStorage.getItem('token')
         const response = await fetch(`${BASE_URL}api/report`,{
             headers:{
                     'Authorization': `Bearer ${token}`   
@@ -279,7 +280,9 @@ a {
 
     
      const me =  async () => {
+        const token =  localStorage.getItem('token')
         const response = await fetch(`${BASE_URL}me`,{
+            
             headers:{
                     'Authorization': `Bearer ${token}`   
             }            
@@ -333,14 +336,14 @@ a {
      }
     
 
-     const obtenerDatosReuniones = async (id) => {
+     const obtenerDatosReuniones = async (id_celula) => {
             try {
-                const response = await fetch(`${BASE_URL}api/reuniones/registradas?id_celula=${id}`);
+                const response = await fetch(`${BASE_URL}api/reuniones/registradas/${id_celula}`);  
                 if (!response.ok) {
                     throw new Error("Error al obtener los datos");
                 }
                 const datos = await response.json();
-                console.log("Reuniones recibidas:",datos)
+                console.log("Reunines recibidas:",datos)
                 return datos;
             } catch (error) {
                 console.error("Error:", error);
@@ -348,10 +351,16 @@ a {
                 throw error;
             }
         };
+
     
     const obtenerDatosCelulas = async () => {
+        const token =  localStorage.getItem('token')
             try {
-                const response = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
+                const response = await fetch(`${BASE_URL}celulas/registradas`,{
+                    headers:{
+                    'Authorization': `Bearer ${token}`   
+            }           
+                });
                 if (!response.ok) {
                     throw new Error("Error al obtener los datos");
                 }
@@ -365,7 +374,9 @@ a {
             }
         };
 
-        const mostrarModalReuniones = (reuniones, nombre) => {
+        const mostrarModalReuniones = async  ( nombre,celula_id) => {
+
+    const reuniones = await obtenerDatosReuniones(celula_id)
     let modal = document.createElement('div');
     modal.className = 'modal';
 
@@ -410,52 +421,36 @@ a {
         const cargarDatosIniciales = async () => {
     try {
         const datos = await obtenerDatosCelulas();
-       
+        
+
         const contenedor = document.getElementById("contenedor");
        
-        // Recorremos cada objeto dentro del array y creamos una caja para cada uno
         
-        // for(let celula of datos){
-        //      const reuniones = await obtenerDatosReuniones(celula.id)
-        //     let caja = document.createElement("div");
-        //     caja.className = "caja";
-            
-        //     let button = document.createElement("button");
-        //     button.onclick = function aaa(){window.location.href=`${BASE_URL}reuniones/${celula.id}`}
-        //     button.className = "button";
-
-        //     let titulo = document.createElement("h1");
-        //     titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
-
-        //     // let text_button = document.createElement("h5");
-        //     button.textContent ="Registrar reunion";
-
-        //     caja.appendChild(titulo);
-        //     caja.appendChild(button);
-
-        //     // button.appendChild(text_button)
-        //     contenedor.appendChild(caja); 
-        // }
+        
         datos.forEach( async (celula) => {
             
-            const reuniones = await obtenerDatosReuniones(celula.id)
+           
            
             let caja = document.createElement("div");
             caja.className = "caja";
+
+            let titulo = document.createElement("h1");
+            titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
             
             let button = document.createElement("button");
             button.onclick = function aaa(){window.location.href=`${BASE_URL}reuniones/${celula.id}`}
             button.className = "button";
+            button.textContent ="Registrar reunion";
+ 
 
             let buttonReuniones = document.createElement("button");
             buttonReuniones.textContent = 'Ver reuniones';
-            buttonReuniones.onclick = () => mostrarModalReuniones(reuniones,celula.nombre_celula);
+            buttonReuniones.onclick = () => mostrarModalReuniones(celula.nombre_celula,celula.id);
 
-            let titulo = document.createElement("h1");
-            titulo.textContent = celula.nombre_celula + " - " + celula.direccion;
+           
 
-            // let text_button = document.createElement("h5");
-            button.textContent ="Registrar reunion";
+            let text_button = document.createElement("h5");
+            
 
             let buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
@@ -465,7 +460,7 @@ a {
             caja.appendChild(titulo);
             
 
-            // button.appendChild(text_button)
+            button.appendChild(text_button)
             contenedor.appendChild(caja); 
             caja.appendChild(buttonContainer);
             
