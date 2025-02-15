@@ -19,11 +19,11 @@ def setup2(app:FastAPI):
         raise HTTPException(status_code=500, detail=f"Error interno en el servidor: {e}")
      
 
-    @app.get("/celulas/registradas/{cedula_user}")
-    def get_celulas(cedula_user: str):
+    @app.get("/celulas/registradas")
+    def get_celulas(user: SystemUser = Depends(get_current_user)):
       
       try:
-         datos = celulas_repo_firestore.extract_celula(cedula_user)
+         datos = celulas_repo_firestore.extract_celula(user.cedula_user)
       except Exception as e:
          raise HTTPException(status_code=404, detail="No se encontraron datos para esta cédula") 
  

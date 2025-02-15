@@ -78,7 +78,7 @@ def reuniones(request: Request, id_celula: str):
     return templateJinja.TemplateResponse("reuniones.html", {
         "request": request,
         "base_url": str(request.base_url),
-        "id_celula": id_celula
+        "id_celula": id_celula,
     })
 
 @app.get("/report", response_class=HTMLResponse)

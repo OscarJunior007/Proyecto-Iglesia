@@ -95,11 +95,12 @@ button {
 
             const cedula = document.getElementById('cedula').value;  // Obtener el valor de la cédula
 
-           
+            
             const response = await fetch(`${BASE_URL}api/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",  
+                    
                 },
                 body: JSON.stringify({ cedula: cedula }),  
             });
@@ -113,8 +114,10 @@ button {
                 localStorage.setItem("token", data['access_token']);
                 localStorage.setItem("profile", data['profile']);
                 localStorage.setItem("cedula",cedula )
-
-                const checkUserData = await fetch(`${BASE_URL}celulas/registradas/${cedula}`);
+                let token = localStorage.getItem('token');
+                const checkUserData = await fetch(`${BASE_URL}celulas/registradas`,{headers:{
+                    'Authorization': `Bearer ${token}`
+                }});
                 
                 if (checkUserData.ok) {
                 const userData = await checkUserData.json();

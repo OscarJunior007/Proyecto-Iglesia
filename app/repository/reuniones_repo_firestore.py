@@ -26,6 +26,7 @@ class Reunion(BaseModel):
     new_people : str
     asisten_iglesia : str
     celulaId: str
+    # lider_id: str
 
   
 
@@ -48,18 +49,17 @@ def create_reunion(datos: Reunion):
     print("Célula creada correctamente.")
 
     
-
-def extract_reunion(id):
+def extract_todas_reuniones(id_celula:str):
     db = firestore.Client()
-
     try:
-        usuarios_ref = db.collection('reuniones')
-        query = usuarios_ref.where('celulaId', '==', id)
-        docs = query.stream()
-
-        reuniones = [doc.to_dict() for doc in docs] 
+        usuarios_ref = db.collection('reuniones')  
+        docs = usuarios_ref.where('celulaId', '==', f'{id_celula}')
+        docs = docs.stream()
+        reuniones = [doc.to_dict() for doc in docs]
+        
+        print("reuniones recibidas",reuniones)
         return reuniones if reuniones else []
-
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"ERROR AL OBTENER LOS DATOS: {e}")
 
